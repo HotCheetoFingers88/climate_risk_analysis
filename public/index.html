@@ -37,35 +37,60 @@
         /* ── Header ── */
         header {
             border-bottom: 1px solid var(--border);
-            padding: 1.25rem 2rem;
+            padding: 1.1rem 2rem;
             display: flex;
             align-items: center;
             gap: 1rem;
             background: var(--surface);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .logo {
-            width: 32px;
-            height: 32px;
+            width: 30px;
+            height: 30px;
             background: var(--accent);
-            border-radius: 8px;
+            border-radius: 7px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 16px;
             flex-shrink: 0;
         }
 
         header h1 {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
             letter-spacing: -0.01em;
         }
 
-        header span {
-            color: var(--muted);
-            font-size: 0.85rem;
+        .nav-tabs {
             margin-left: auto;
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .nav-tab {
+            background: none;
+            border: 1px solid transparent;
+            color: var(--muted);
+            border-radius: 6px;
+            padding: 0.35rem 0.9rem;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .nav-tab:hover {
+            color: var(--text);
+            border-color: var(--border);
+        }
+
+        .nav-tab.active {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(0, 201, 167, 0.07);
         }
 
         /* ── Layout ── */
@@ -73,6 +98,14 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 2rem;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
         }
 
         /* ── Upload zone ── */
@@ -86,13 +119,13 @@
         }
 
         .upload-section:hover {
-            border-color: var(--accent);
+            border-color: rgba(0, 201, 167, 0.4);
         }
 
-        .upload-section h2 {
-            font-size: 0.85rem;
+        .section-label {
+            font-size: 0.75rem;
             text-transform: uppercase;
-            letter-spacing: 0.08em;
+            letter-spacing: 0.09em;
             color: var(--muted);
             margin-bottom: 1rem;
         }
@@ -114,7 +147,7 @@
             cursor: pointer;
             transition: all 0.2s;
             background: var(--surface2);
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             color: var(--muted);
         }
 
@@ -128,34 +161,33 @@
             display: none;
         }
 
-        .drop-zone .icon {
-            font-size: 1.5rem;
-            margin-bottom: 0.4rem;
+        .drop-zone .dz-icon {
+            font-size: 1.4rem;
+            margin-bottom: 0.3rem;
         }
 
-        .or-divider {
-            display: flex;
-            align-items: center;
+        .or-div {
             color: var(--muted);
             font-size: 0.8rem;
-            padding-top: 0.5rem;
+            align-self: center;
+            padding: 0 0.25rem;
         }
 
-        .sample-btn {
+        .btn-primary {
             background: var(--accent);
             color: #0a0f1a;
             border: none;
             border-radius: 8px;
-            padding: 0.75rem 1.5rem;
-            font-size: 0.9rem;
-            font-weight: 600;
+            padding: 0.75rem 1.4rem;
+            font-size: 0.88rem;
+            font-weight: 700;
             cursor: pointer;
             transition: opacity 0.2s;
             white-space: nowrap;
             align-self: center;
         }
 
-        .sample-btn:hover {
+        .btn-primary:hover {
             opacity: 0.85;
         }
 
@@ -163,28 +195,28 @@
             background: var(--surface2);
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 1rem 1.25rem;
+            padding: 0.9rem 1.1rem;
             font-family: var(--font-mono);
-            font-size: 0.78rem;
+            font-size: 0.77rem;
             color: var(--muted);
             flex: 1;
-            min-width: 200px;
+            min-width: 180px;
+            line-height: 1.8;
         }
 
         .csv-format strong {
             color: var(--accent);
             display: block;
-            margin-bottom: 0.4rem;
-            font-family: inherit;
+            margin-bottom: 0.3rem;
         }
 
-        /* ── Status bar ── */
+        /* ── Status ── */
         #status {
             display: none;
             padding: 0.75rem 1rem;
             border-radius: 8px;
             margin-bottom: 1.5rem;
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             font-weight: 500;
         }
 
@@ -213,18 +245,20 @@
             border: 1px solid var(--border);
             border-radius: 10px;
             padding: 1.1rem 1.25rem;
+            position: relative;
+            cursor: default;
         }
 
         .stat-label {
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             text-transform: uppercase;
-            letter-spacing: 0.07em;
+            letter-spacing: 0.08em;
             color: var(--muted);
-            margin-bottom: 0.35rem;
+            margin-bottom: 0.3rem;
         }
 
         .stat-value {
-            font-size: 1.6rem;
+            font-size: 1.55rem;
             font-weight: 700;
             font-family: var(--font-mono);
             color: var(--accent);
@@ -239,9 +273,18 @@
         }
 
         .stat-sub {
-            font-size: 0.75rem;
+            font-size: 0.73rem;
             color: var(--muted);
             margin-top: 0.2rem;
+        }
+
+        .stat-hint {
+            font-size: 0.68rem;
+            color: rgba(107, 127, 163, 0.6);
+            margin-top: 0.4rem;
+            border-top: 1px solid var(--border);
+            padding-top: 0.4rem;
+            line-height: 1.4;
         }
 
         /* ── Charts ── */
@@ -270,11 +313,18 @@
         }
 
         .chart-title {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
-            letter-spacing: 0.07em;
+            letter-spacing: 0.08em;
             color: var(--muted);
+            margin-bottom: 0.75rem;
+        }
+
+        .chart-desc {
+            font-size: 0.8rem;
+            color: rgba(107, 127, 163, 0.8);
             margin-bottom: 1rem;
+            line-height: 1.5;
         }
 
         .chart-wrap {
@@ -282,7 +332,7 @@
             height: 260px;
         }
 
-        /* ── Model info ── */
+        /* ── Model card ── */
         .model-card {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -292,23 +342,30 @@
         }
 
         .model-title {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
-            letter-spacing: 0.07em;
+            letter-spacing: 0.08em;
             color: var(--muted);
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
         }
 
         .equation {
             font-family: var(--font-mono);
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             background: var(--surface2);
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 1rem 1.25rem;
+            padding: 0.9rem 1.1rem;
             color: var(--accent);
-            margin-bottom: 1rem;
+            margin-bottom: 0.9rem;
             word-break: break-all;
+        }
+
+        .model-explain {
+            font-size: 0.82rem;
+            color: var(--muted);
+            margin-bottom: 1rem;
+            line-height: 1.6;
         }
 
         .corr-row {
@@ -318,7 +375,7 @@
         }
 
         .corr-item {
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             color: var(--muted);
         }
 
@@ -326,16 +383,11 @@
             color: var(--text);
         }
 
-        /* ── Results hidden by default ── */
-        #results {
-            display: none;
-        }
-
         /* ── Spinner ── */
         .spinner {
             display: inline-block;
-            width: 14px;
-            height: 14px;
+            width: 13px;
+            height: 13px;
             border: 2px solid rgba(0, 201, 167, 0.3);
             border-top-color: var(--accent);
             border-radius: 50%;
@@ -350,41 +402,203 @@
             }
         }
 
-        /* ── Data table ── */
+        /* ── Table ── */
         .table-wrap {
             overflow-x: auto;
-            margin-top: 1rem;
+            margin-top: 0.5rem;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.82rem;
+            font-size: 0.81rem;
         }
 
         th {
             text-align: left;
             padding: 0.5rem 0.75rem;
             color: var(--muted);
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 0.06em;
             border-bottom: 1px solid var(--border);
         }
 
         td {
-            padding: 0.5rem 0.75rem;
+            padding: 0.48rem 0.75rem;
             border-bottom: 1px solid rgba(30, 46, 74, 0.5);
             font-family: var(--font-mono);
         }
 
         tr.anomaly td {
-            background: rgba(255, 107, 107, 0.07);
+            background: rgba(255, 107, 107, 0.06);
             color: var(--accent2);
         }
 
         tr:last-child td {
             border-bottom: none;
+        }
+
+        #results {
+            display: none;
+        }
+
+        /* ── Sample Data tab ── */
+        .sample-table-wrap {
+            overflow-x: auto;
+            margin-bottom: 2rem;
+        }
+
+        .sample-table-wrap table {
+            font-size: 0.85rem;
+        }
+
+        .sample-table-wrap td {
+            font-family: var(--font-mono);
+        }
+
+        .sample-table-wrap tr:last-child td {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.25rem;
+        }
+
+        .info-card-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .info-card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .info-card p {
+            font-size: 0.84rem;
+            color: rgba(232, 237, 245, 0.75);
+            line-height: 1.6;
+        }
+
+        /* ── Glossary tab ── */
+        .gloss-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .gloss-section-title {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+            padding-bottom: 0.6rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.25rem;
+        }
+
+        .gloss-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .gloss-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.25rem;
+        }
+
+        .gloss-term {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--accent3);
+            margin-bottom: 0.35rem;
+        }
+
+        .gloss-formula {
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            color: var(--accent);
+            background: var(--surface2);
+            border-radius: 5px;
+            padding: 0.3rem 0.6rem;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+
+        .gloss-def {
+            font-size: 0.83rem;
+            color: rgba(232, 237, 245, 0.75);
+            line-height: 1.6;
+        }
+
+        .gloss-eg {
+            font-size: 0.78rem;
+            color: var(--muted);
+            margin-top: 0.4rem;
+            border-left: 2px solid var(--border);
+            padding-left: 0.6rem;
+        }
+
+        .badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            margin-left: 0.4rem;
+            vertical-align: middle;
+        }
+
+        .badge-good {
+            background: rgba(0, 201, 167, 0.15);
+            color: var(--accent);
+        }
+
+        .badge-warn {
+            background: rgba(255, 209, 102, 0.15);
+            color: var(--accent3);
+        }
+
+        .badge-bad {
+            background: rgba(255, 107, 107, 0.15);
+            color: var(--accent2);
+        }
+
+        .run-sample-inline {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--accent);
+            color: #0a0f1a;
+            border: none;
+            border-radius: 8px;
+            padding: 0.6rem 1.2rem;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            margin-top: 1rem;
+        }
+
+        .run-sample-inline:hover {
+            opacity: 0.85;
         }
     </style>
 </head>
@@ -394,110 +608,494 @@
     <header>
         <div class="logo">🌍</div>
         <h1>Climate Risk Analysis</h1>
-        <span>Linear Regression · Anomaly Detection</span>
+        <nav class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('sample')">Sample Data</button>
+            <button class="nav-tab" onclick="switchTab('analyze')">Analyze</button>
+            <button class="nav-tab" onclick="switchTab('glossary')">Glossary</button>
+        </nav>
     </header>
 
     <div class="container">
 
-        <!-- Upload -->
-        <div class="upload-section">
-            <h2>Data Input</h2>
-            <div class="upload-row">
-                <div class="drop-zone" id="dropZone">
-                    <input type="file" id="fileInput" accept=".csv">
-                    <div class="icon">📂</div>
-                    <div>Drop your CSV here or <u>browse</u></div>
-                    <div style="font-size:0.75rem;margin-top:0.3rem" id="fileName"></div>
+        <!-- ══════════════════════════════════════
+       TAB: ANALYZE
+  ══════════════════════════════════════ -->
+        <div class="tab-panel" id="panelAnalyze">
+
+            <div class="upload-section">
+                <div class="section-label">Data Input</div>
+                <div class="upload-row">
+                    <div class="drop-zone" id="dropZone">
+                        <input type="file" id="fileInput" accept=".csv">
+                        <div class="dz-icon">📂</div>
+                        <div>Drop your CSV here or <u>browse</u></div>
+                        <div style="font-size:0.73rem;margin-top:0.25rem;color:var(--accent)" id="fileName"></div>
+                    </div>
+                    <div class="or-div">or</div>
+                    <button class="btn-primary" id="sampleBtn">▶ Run Sample Data</button>
+                    <div class="csv-format">
+                        <strong>Required columns:</strong>
+                        Year<br>Temperature<br>Precipitation<br>RiskScore
+                    </div>
                 </div>
-                <div class="or-divider">or</div>
-                <button class="sample-btn" id="sampleBtn">▶ Run with Sample Data</button>
-                <div class="csv-format">
-                    <strong>Required CSV columns:</strong>
-                    Year, Temperature,<br>Precipitation, RiskScore
+            </div>
+
+            <div id="status"></div>
+
+            <div id="results">
+
+                <div class="stats-grid" id="statsGrid"></div>
+
+                <div class="model-card">
+                    <div class="model-title">Regression Equation</div>
+                    <div class="equation" id="equation"></div>
+                    <div class="model-explain" id="modelExplain"></div>
+                    <div class="corr-row" id="corrRow"></div>
                 </div>
+
+                <div class="charts-grid">
+                    <div class="chart-card wide">
+                        <div class="chart-title">Risk Score Over Time — Actual vs Predicted</div>
+                        <div class="chart-desc">Green line = measured risk each year. Dashed yellow = what the model
+                            predicts from temperature and precipitation alone. Red dots = anomalous years (>2σ from
+                            mean).</div>
+                        <div class="chart-wrap"><canvas id="timelineChart"></canvas></div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-title">Temperature vs Risk Score</div>
+                        <div class="chart-desc">Each dot is one year. Rising right-to-left shows higher temperatures
+                            correlate with higher risk. Red dots are anomalies.</div>
+                        <div class="chart-wrap"><canvas id="tempChart"></canvas></div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-title">Precipitation vs Risk Score</div>
+                        <div class="chart-desc">Years with less rainfall tend to score higher risk. A downward slope
+                            here indicates that dryness amplifies climate risk.</div>
+                        <div class="chart-wrap"><canvas id="precipChart"></canvas></div>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-title">Full Data Table <span
+                            style="color:var(--accent2);font-size:0.72rem;margin-left:0.5rem">🔴 highlighted rows =
+                            anomalies</span></div>
+                    <div class="table-wrap">
+                        <table id="dataTable"></table>
+                    </div>
+                </div>
+
             </div>
         </div>
 
-        <div id="status"></div>
+        <!-- ══════════════════════════════════════
+       TAB: SAMPLE DATA
+  ══════════════════════════════════════ -->
+        <div class="tab-panel active" id="panelSample">
 
-        <!-- Results -->
-        <div id="results">
+            <div class="chart-card" style="margin-bottom:2rem">
+                <div class="chart-title">About the Sample Dataset</div>
+                <div class="chart-desc" style="margin-bottom:1rem">
+                    The built-in dataset covers <strong style="color:var(--text)">21 years (1990–2010)</strong> of
+                    simulated climate data for a hypothetical region. It demonstrates a clear trend: rising temperatures
+                    and declining precipitation are associated with increasing climate risk scores over time. It is
+                    intentionally well-behaved so the regression model fits cleanly — real-world data will be noisier.
+                </div>
+                <button class="run-sample-inline"
+                    onclick="switchTab('analyze'); setTimeout(() => document.getElementById('sampleBtn').click(), 100)">
+                    ▶ Run analysis on this data
+                </button>
+            </div>
 
-            <!-- Stats -->
-            <div class="stats-grid" id="statsGrid"></div>
+            <div class="section-label" style="margin-bottom:1rem">Column Definitions</div>
+            <div class="info-grid" style="margin-bottom:2rem">
+                <div class="info-card">
+                    <div class="info-card-label">Column 1</div>
+                    <div class="info-card-title">Year</div>
+                    <p>The calendar year of observation. Used as the x-axis in the timeline chart. Must be a 4-digit
+                        integer (e.g. 1990). This column is not used in the regression — it's just for labelling.</p>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-label">Column 2</div>
+                    <div class="info-card-title">Temperature (°C)</div>
+                    <p>Annual average surface temperature in degrees Celsius. In the sample data this rises from ~14°C
+                        in 1990 to ~21°C in 2010, reflecting an accelerating warming trend. Used as a predictor (input)
+                        in the regression model.</p>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-label">Column 3</div>
+                    <div class="info-card-title">Precipitation (mm)</div>
+                    <p>Total annual rainfall in millimetres. In the sample data this falls from 820 mm to 410 mm over
+                        the 21-year window. Lower precipitation = drier conditions = higher risk. Also used as a
+                        predictor in the regression.</p>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-label">Column 4 — Target</div>
+                    <div class="info-card-title">RiskScore</div>
+                    <p>A composite climate risk index on an open-ended scale (sample data runs 32–91). Higher = more
+                        dangerous conditions. This is the value the model is trained to predict. In your own CSV this
+                        could represent any risk metric your data uses.</p>
+                </div>
+            </div>
 
-            <!-- Model equation -->
-            <div class="model-card">
-                <div class="model-title">Regression Model</div>
-                <div class="equation" id="equation"></div>
-                <div class="corr-row" id="corrRow"></div>
+            <div class="section-label" style="margin-bottom:1rem">Sample Data Preview</div>
+            <div class="chart-card sample-table-wrap">
+                <table>
+                    <tr>
+                        <th>Year</th>
+                        <th>Temperature (°C)</th>
+                        <th>Precipitation (mm)</th>
+                        <th>RiskScore</th>
+                    </tr>
+                    <tr>
+                        <td>1990</td>
+                        <td>14.2</td>
+                        <td>820</td>
+                        <td>32.1</td>
+                    </tr>
+                    <tr>
+                        <td>1991</td>
+                        <td>14.5</td>
+                        <td>790</td>
+                        <td>33.4</td>
+                    </tr>
+                    <tr>
+                        <td>1992</td>
+                        <td>14.8</td>
+                        <td>810</td>
+                        <td>35.2</td>
+                    </tr>
+                    <tr>
+                        <td>1993</td>
+                        <td>15.1</td>
+                        <td>760</td>
+                        <td>37.8</td>
+                    </tr>
+                    <tr>
+                        <td>1994</td>
+                        <td>15.3</td>
+                        <td>740</td>
+                        <td>39.1</td>
+                    </tr>
+                    <tr>
+                        <td>1995</td>
+                        <td>15.7</td>
+                        <td>720</td>
+                        <td>41.5</td>
+                    </tr>
+                    <tr>
+                        <td>1996</td>
+                        <td>16.0</td>
+                        <td>700</td>
+                        <td>43.2</td>
+                    </tr>
+                    <tr>
+                        <td>1997</td>
+                        <td>16.2</td>
+                        <td>680</td>
+                        <td>45.8</td>
+                    </tr>
+                    <tr>
+                        <td>1998</td>
+                        <td>16.8</td>
+                        <td>650</td>
+                        <td>49.3</td>
+                    </tr>
+                    <tr>
+                        <td>1999</td>
+                        <td>17.1</td>
+                        <td>630</td>
+                        <td>52.1</td>
+                    </tr>
+                    <tr>
+                        <td>2000</td>
+                        <td>17.4</td>
+                        <td>610</td>
+                        <td>54.7</td>
+                    </tr>
+                    <tr>
+                        <td>2001</td>
+                        <td>17.6</td>
+                        <td>590</td>
+                        <td>57.2</td>
+                    </tr>
+                    <tr>
+                        <td>2002</td>
+                        <td>18.0</td>
+                        <td>570</td>
+                        <td>60.1</td>
+                    </tr>
+                    <tr>
+                        <td>2003</td>
+                        <td>18.3</td>
+                        <td>550</td>
+                        <td>63.4</td>
+                    </tr>
+                    <tr>
+                        <td>2004</td>
+                        <td>18.7</td>
+                        <td>530</td>
+                        <td>67.2</td>
+                    </tr>
+                    <tr>
+                        <td>2005</td>
+                        <td>19.1</td>
+                        <td>510</td>
+                        <td>71.0</td>
+                    </tr>
+                    <tr>
+                        <td>2006</td>
+                        <td>19.4</td>
+                        <td>490</td>
+                        <td>74.5</td>
+                    </tr>
+                    <tr>
+                        <td>2007</td>
+                        <td>19.8</td>
+                        <td>470</td>
+                        <td>78.3</td>
+                    </tr>
+                    <tr>
+                        <td>2008</td>
+                        <td>20.2</td>
+                        <td>450</td>
+                        <td>82.1</td>
+                    </tr>
+                    <tr>
+                        <td>2009</td>
+                        <td>20.6</td>
+                        <td>430</td>
+                        <td>86.4</td>
+                    </tr>
+                    <tr>
+                        <td>2010</td>
+                        <td>21.0</td>
+                        <td>410</td>
+                        <td>90.8</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════
+       TAB: GLOSSARY
+  ══════════════════════════════════════ -->
+        <div class="tab-panel" id="panelGlossary">
+
+            <!-- Metrics -->
+            <div class="gloss-section">
+                <div class="gloss-section-title">Output Metrics — what each number means</div>
+                <div class="gloss-grid">
+
+                    <div class="gloss-card">
+                        <div class="gloss-term">R² Score <span class="badge badge-good">≥0.85 good</span><span
+                                class="badge badge-warn">0.6–0.85 ok</span><span class="badge badge-bad">&lt;0.6
+                                weak</span></div>
+                        <div class="gloss-formula">R² = 1 − (SS_res / SS_tot)</div>
+                        <div class="gloss-def">The fraction of variation in RiskScore that is explained by Temperature
+                            and Precipitation. An R² of 0.97 means the two variables account for 97% of why risk goes up
+                            or down. The remaining 3% is due to factors not in your data.</div>
+                        <div class="gloss-eg">Sample data R² ≈ 0.997 — near-perfect because the dataset was
+                            synthetically generated to follow a clean linear trend.</div>
+                    </div>
+
+                    <div class="gloss-card">
+                        <div class="gloss-term">MSE — Mean Squared Error</div>
+                        <div class="gloss-formula">MSE = Σ(actual − predicted)² / n</div>
+                        <div class="gloss-def">The average squared gap between what the model predicted and what
+                            actually happened. Squaring penalises large errors more than small ones. A lower MSE is
+                            better, but the absolute value only makes sense compared across runs of the same dataset —
+                            5.0 might be excellent for one scale and terrible for another.</div>
+                        <div class="gloss-eg">If RiskScore is on a 0–100 scale and MSE is 0.8, predictions are off by
+                            roughly √0.8 ≈ 0.9 points on average.</div>
+                    </div>
+
+                    <div class="gloss-card">
+                        <div class="gloss-term">Mean Risk Score</div>
+                        <div class="gloss-formula">mean = Σ(x) / n</div>
+                        <div class="gloss-def">The arithmetic average RiskScore across all years in your dataset. A
+                            quick summary of the "typical" risk level. Sensitive to outliers — if one year is extremely
+                            high it will pull the mean up.</div>
+                    </div>
+
+                    <div class="gloss-card">
+                        <div class="gloss-term">Median Risk Score</div>
+                        <div class="gloss-formula">middle value when sorted</div>
+                        <div class="gloss-def">The middle value when all RiskScores are sorted. Exactly half the years
+                            fall above it, half below. More robust than the mean when anomalies are present. If mean and
+                            median differ a lot, your data is skewed.</div>
+                        <div class="gloss-eg">Mean 62, Median 58 → a few high-risk years are pulling the average up.
+                        </div>
+                    </div>
+
+                    <div class="gloss-card">
+                        <div class="gloss-term">σ — Standard Deviation</div>
+                        <div class="gloss-formula">σ = √(Σ(x − mean)² / n)</div>
+                        <div class="gloss-def">How spread out the RiskScores are around the mean. A small σ means risk
+                            was fairly stable year-to-year; a large σ means high volatility. Shown under the Mean card
+                            as "σ = ...".</div>
+                    </div>
+
+                    <div class="gloss-card">
+                        <div class="gloss-term">Δ Error (table column)</div>
+                        <div class="gloss-formula">error = actual − predicted</div>
+                        <div class="gloss-def">The raw prediction error for each individual year. Positive = the model
+                            underestimated risk. Negative = overestimated. Large errors in specific years are worth
+                            investigating — they may reflect real events (drought, heatwave) not captured by temperature
+                            and precipitation alone.</div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Regression -->
+            <div class="gloss-section">
+                <div class="gloss-section-title">Regression Model — how it works</div>
+                <div class="gloss-grid">
+
+                    <div class="gloss-card">
+                        <div class="gloss-term">Multiple Linear Regression</div>
+                        <div class="gloss-def">Fits a straight-line relationship between two input variables
+                            (Temperature and Precipitation) and one output (RiskScore). The model finds the three
+                            numbers b0, b1, b2 that minimise prediction error across your dataset. It assumes the
+                            relationship is linear and additive — each extra °C adds a fixed amount of risk regardless
+                            of the precipitation level.</div>
+                    </div>
+
+                    <div class="gloss-card">
+                        <div class="gloss-term">b0 — Intercept</div>
+                        <div class="gloss-formula">RiskScore when Temp=0 and Precip=0</div>
+                        <div class="gloss-def">The baseline RiskScore if both inputs were zero. Not usually meaningful
+                            on its own (0°C and 0mm precipitation is an extreme scenario) — it's just the mathematical
+                            anchor of the line. What matters is how b1 and b2 describe the change.</div>
+                    </div>
+
+                    <div class="gloss-card">
+                        <div class="gloss-term">b1 — Temperature coefficient</div>
+                        <div class="gloss-formula">risk change per 1°C increase</div>
+                        <div class="gloss-def">For every extra degree of temperature, RiskScore changes by b1 points. If
+                            b1 = 4.2, warming by 2°C is associated with +8.4 points of risk. A positive b1 means warmer
+                            = riskier, which is expected for most climate risk models.</div>
+                    </div>
+
+                    <div class="gloss-card">
+                        <div class="gloss-term">b2 — Precipitation coefficient</div>
+                        <div class="gloss-formula">risk change per 1mm increase</div>
+                        <div class="gloss-def">For every extra millimetre of precipitation, RiskScore changes by b2.
+                            This is usually negative — more rain = lower risk. If b2 = −0.05, a 100mm drop in annual
+                            rainfall adds 5 points of risk.</div>
+                    </div>
+
+                    <div class="gloss-card">
+                        <div class="gloss-term">Correlation (Temp ↔ Risk)</div>
+                        <div class="gloss-formula">r ∈ [−1, +1]</div>
+                        <div class="gloss-def">Pearson correlation between Temperature and RiskScore. +1 = perfectly
+                            increase together. −1 = one rises as the other falls. 0 = no linear relationship. Values
+                            above +0.7 or below −0.7 indicate a strong relationship worth including in the model.</div>
+                    </div>
+
+                    <div class="gloss-card">
+                        <div class="gloss-term">Correlation (Precip ↔ Risk)</div>
+                        <div class="gloss-formula">r ∈ [−1, +1]</div>
+                        <div class="gloss-def">Same measure between Precipitation and RiskScore. Typically negative for
+                            climate risk — drier years tend to have higher risk. If this correlation is near zero,
+                            precipitation may not be a useful predictor and b2 will be close to zero.</div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Anomaly Detection -->
+            <div class="gloss-section">
+                <div class="gloss-section-title">Anomaly Detection</div>
+                <div class="gloss-grid">
+
+                    <div class="gloss-card">
+                        <div class="gloss-term">Anomaly <span class="badge badge-bad">red highlight</span></div>
+                        <div class="gloss-formula">|RiskScore − mean| > 2σ</div>
+                        <div class="gloss-def">A year is flagged as an anomaly if its RiskScore is more than 2 standard
+                            deviations from the average. Statistically, ~5% of data points in a normal distribution fall
+                            outside this range. Anomalies could represent real extreme events (heatwaves, droughts) or
+                            data entry errors — always worth checking.</div>
+                        <div class="gloss-eg">Mean=60, σ=10 → anomaly if score &lt;40 or &gt;80.</div>
+                    </div>
+
+                    <div class="gloss-card">
+                        <div class="gloss-term">Why 2σ?</div>
+                        <div class="gloss-def">Two standard deviations is a common statistical threshold — it flags
+                            roughly the most extreme 5% of values while ignoring normal year-to-year variation. A
+                            stricter threshold (3σ) would only flag truly extreme outliers. A looser one (1σ) would flag
+                            a third of all data. 2σ balances sensitivity and specificity for climate data.</div>
+                    </div>
+
+                </div>
             </div>
 
             <!-- Charts -->
-            <div class="charts-grid">
-                <div class="chart-card wide">
-                    <div class="chart-title">Risk Score Over Time — Actual vs Predicted</div>
-                    <div class="chart-wrap"><canvas id="timelineChart"></canvas></div>
-                </div>
-                <div class="chart-card">
-                    <div class="chart-title">Temperature vs Risk Score</div>
-                    <div class="chart-wrap"><canvas id="tempChart"></canvas></div>
-                </div>
-                <div class="chart-card">
-                    <div class="chart-title">Precipitation vs Risk Score</div>
-                    <div class="chart-wrap"><canvas id="precipChart"></canvas></div>
+            <div class="gloss-section">
+                <div class="gloss-section-title">How to read the charts</div>
+                <div class="gloss-grid">
+
+                    <div class="gloss-card">
+                        <div class="gloss-term">Timeline Chart (top)</div>
+                        <div class="gloss-def">Shows actual measured risk (solid teal line) and model-predicted risk
+                            (dashed yellow) over time. When the lines track closely, the model is accurate. When they
+                            diverge, something happened that year that temperature and precipitation don't explain. Red
+                            dots on the actual line indicate anomalies.</div>
+                    </div>
+
+                    <div class="gloss-card">
+                        <div class="gloss-term">Scatter Plots (bottom two)</div>
+                        <div class="gloss-def">Each dot is one year. The x-axis is Temperature or Precipitation; the
+                            y-axis is RiskScore. Teal dots = actual risk, yellow dots = what the model predicted for
+                            that same x value. A clear diagonal band of dots indicates a strong linear relationship.
+                            Scattered or curved patterns suggest the linear model may not be the best fit.</div>
+                    </div>
+
                 </div>
             </div>
 
-            <!-- Data table -->
-            <div class="chart-card">
-                <div class="chart-title">Data Table <span
-                        style="color:var(--accent2);font-size:0.75rem;margin-left:0.5rem">🔴 = anomaly</span></div>
-                <div class="table-wrap">
-                    <table id="dataTable"></table>
-                </div>
-            </div>
+        </div><!-- /glossary -->
 
-        </div>
-    </div>
+    </div><!-- /container -->
 
     <script>
         const API = '/api/analyze';
         let charts = {};
+
+        // ── Tab switching ──
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+            document.getElementById('panel' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+            const tabs = ['sample', 'analyze', 'glossary'];
+            document.querySelectorAll('.nav-tab')[tabs.indexOf(tab)].classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
         // ── Chart defaults ──
         Chart.defaults.color = '#6b7fa3';
         Chart.defaults.borderColor = '#1e2e4a';
         Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
 
-        function destroyCharts() {
-            Object.values(charts).forEach(c => c.destroy());
-            charts = {};
-        }
+        function destroyCharts() { Object.values(charts).forEach(c => c.destroy()); charts = {}; }
 
-        // ── UI helpers ──
+        // ── Status ──
         function showStatus(msg, type) {
             const el = document.getElementById('status');
-            el.style.display = 'block';
-            el.className = type;
-            el.innerHTML = type === 'loading'
-                ? `<span class="spinner"></span>${msg}`
-                : msg;
+            el.style.display = 'block'; el.className = type;
+            el.innerHTML = type === 'loading' ? `<span class="spinner"></span>${msg}` : msg;
         }
         function hideStatus() { document.getElementById('status').style.display = 'none'; }
 
         // ── File drop ──
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
-
         dropZone.addEventListener('click', () => fileInput.click());
         dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
         dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
         dropZone.addEventListener('drop', e => {
-            e.preventDefault();
-            dropZone.classList.remove('dragover');
-            const file = e.dataTransfer.files[0];
-            if (file) handleFile(file);
+            e.preventDefault(); dropZone.classList.remove('dragover');
+            const file = e.dataTransfer.files[0]; if (file) handleFile(file);
         });
         fileInput.addEventListener('change', () => { if (fileInput.files[0]) handleFile(fileInput.files[0]); });
 
@@ -507,7 +1105,6 @@
             reader.onload = e => runAnalysis(e.target.result);
             reader.readAsText(file);
         }
-
         document.getElementById('sampleBtn').addEventListener('click', () => {
             document.getElementById('fileName').textContent = 'sample_data.csv';
             runAnalysis(null);
@@ -518,7 +1115,6 @@
             showStatus('Running analysis…', 'loading');
             destroyCharts();
             document.getElementById('results').style.display = 'none';
-
             try {
                 const opts = csvText
                     ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ csv: csvText }) }
@@ -536,142 +1132,105 @@
         // ── Render ──
         function renderResults(d) {
             const s = d.stats;
-
-            // Stats cards
             const r2class = s.r2 >= 0.85 ? '' : s.r2 >= 0.6 ? 'warn' : 'danger';
+            const r2label = s.r2 >= 0.85 ? '✓ Strong fit' : s.r2 >= 0.6 ? '~ Moderate fit' : '✗ Weak fit';
+
             document.getElementById('statsGrid').innerHTML = `
     <div class="stat-card">
       <div class="stat-label">Data Points</div>
       <div class="stat-value">${s.n}</div>
-      <div class="stat-sub">${s.n_anomalies} anomalies</div>
+      <div class="stat-sub">${s.n_anomalies} anomalies found</div>
+      <div class="stat-hint">Number of valid rows used in the model. More data = more reliable results.</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Mean Risk</div>
       <div class="stat-value">${s.mean}</div>
       <div class="stat-sub">σ = ${s.std}</div>
+      <div class="stat-hint">Average RiskScore across all years. σ shows how much it varies.</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Median Risk</div>
       <div class="stat-value">${s.median}</div>
+      <div class="stat-sub">Middle value</div>
+      <div class="stat-hint">Half of years fall above this, half below. Less affected by extreme years than the mean.</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">R² Score</div>
       <div class="stat-value ${r2class}">${s.r2}</div>
-      <div class="stat-sub">Model fit</div>
+      <div class="stat-sub">${r2label}</div>
+      <div class="stat-hint">How much of the risk variation Temp + Precip explain. 1.0 = perfect, 0 = useless.</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">MSE</div>
       <div class="stat-value">${s.mse}</div>
-      <div class="stat-sub">Mean Sq. Error</div>
+      <div class="stat-sub">Mean Squared Error</div>
+      <div class="stat-hint">Average squared prediction error. Lower is better. Compare across runs, not in isolation.</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Anomalies</div>
       <div class="stat-value ${s.n_anomalies > 0 ? 'danger' : ''}">${s.n_anomalies}</div>
-      <div class="stat-sub">2σ threshold</div>
+      <div class="stat-sub">Beyond 2σ from mean</div>
+      <div class="stat-hint">Years with unusually high or low risk. Could be real events or data errors — worth investigating.</div>
     </div>
   `;
 
-            // Equation
-            const sign = (v) => v >= 0 ? '+' : '-';
+            const sign = v => v >= 0 ? '+' : '−';
+            const absB1 = Math.abs(s.b1_temp), absB2 = Math.abs(s.b2_precip);
             document.getElementById('equation').textContent =
-                `RiskScore = ${s.b0} ${sign(s.b1_temp)} ${Math.abs(s.b1_temp)} × Temperature ${sign(s.b2_precip)} ${Math.abs(s.b2_precip)} × Precipitation`;
+                `RiskScore = ${s.b0} ${sign(s.b1_temp)} ${absB1} × Temperature ${sign(s.b2_precip)} ${absB2} × Precipitation`;
+
+            document.getElementById('modelExplain').innerHTML =
+                `Each extra <strong style="color:var(--text)">1°C</strong> of temperature is associated with a risk change of <strong style="color:var(--accent)">${s.b1_temp > 0 ? '+' : ''}${s.b1_temp}</strong> points. ` +
+                `Each extra <strong style="color:var(--text)">1mm</strong> of precipitation is associated with a change of <strong style="color:var(--accent)">${s.b2_precip > 0 ? '+' : ''}${s.b2_precip}</strong> points. ` +
+                `The model explains <strong style="color:var(--accent)">${(s.r2 * 100).toFixed(1)}%</strong> of the variation in RiskScore.`;
 
             document.getElementById('corrRow').innerHTML = `
-    <div class="corr-item">Temp ↔ Risk: <strong>${s.temp_risk_corr}</strong></div>
-    <div class="corr-item">Precip ↔ Risk: <strong>${s.precip_risk_corr}</strong></div>
+    <div class="corr-item">Temp ↔ Risk correlation: <strong>${s.temp_risk_corr}</strong></div>
+    <div class="corr-item">Precip ↔ Risk correlation: <strong>${s.precip_risk_corr}</strong></div>
   `;
 
-            // Timeline chart
-            const anomalyColors = d.actual_risk.map((v, i) =>
-                d.anomalies[i] ? 'rgba(255,107,107,1)' : 'rgba(0,201,167,0.8)'
+            const anomalyColors = d.actual_risk.map((_, i) =>
+                d.anomalies[i] ? 'rgba(255,107,107,1)' : 'rgba(0,201,167,0.85)'
             );
             charts.timeline = new Chart(document.getElementById('timelineChart'), {
                 type: 'line',
                 data: {
                     labels: d.years,
                     datasets: [
-                        {
-                            label: 'Actual Risk',
-                            data: d.actual_risk,
-                            borderColor: 'rgba(0,201,167,0.9)',
-                            backgroundColor: 'rgba(0,201,167,0.08)',
-                            pointBackgroundColor: anomalyColors,
-                            pointRadius: 5,
-                            tension: 0.3,
-                            fill: true,
-                        },
-                        {
-                            label: 'Predicted Risk',
-                            data: d.predicted_risk,
-                            borderColor: 'rgba(255,209,102,0.9)',
-                            borderDash: [5, 4],
-                            pointRadius: 3,
-                            tension: 0.3,
-                            fill: false,
-                        }
+                        { label: 'Actual Risk', data: d.actual_risk, borderColor: 'rgba(0,201,167,0.9)', backgroundColor: 'rgba(0,201,167,0.07)', pointBackgroundColor: anomalyColors, pointRadius: 5, tension: 0.3, fill: true },
+                        { label: 'Predicted Risk', data: d.predicted_risk, borderColor: 'rgba(255,209,102,0.9)', borderDash: [5, 4], pointRadius: 3, tension: 0.3, fill: false }
                     ]
                 },
                 options: chartOpts('Risk Score')
             });
 
-            // Temp scatter
             charts.temp = new Chart(document.getElementById('tempChart'), {
                 type: 'scatter',
                 data: {
                     datasets: [
-                        {
-                            label: 'Actual',
-                            data: d.temperatures.map((t, i) => ({ x: t, y: d.actual_risk[i] })),
-                            backgroundColor: d.anomalies.map(a => a ? 'rgba(255,107,107,0.8)' : 'rgba(0,201,167,0.7)'),
-                            pointRadius: 6,
-                        },
-                        {
-                            label: 'Predicted',
-                            data: d.temperatures.map((t, i) => ({ x: t, y: d.predicted_risk[i] })),
-                            backgroundColor: 'rgba(255,209,102,0.5)',
-                            pointRadius: 4,
-                        }
+                        { label: 'Actual', data: d.temperatures.map((t, i) => ({ x: t, y: d.actual_risk[i] })), backgroundColor: d.anomalies.map(a => a ? 'rgba(255,107,107,0.85)' : 'rgba(0,201,167,0.7)'), pointRadius: 6 },
+                        { label: 'Predicted', data: d.temperatures.map((t, i) => ({ x: t, y: d.predicted_risk[i] })), backgroundColor: 'rgba(255,209,102,0.5)', pointRadius: 4 }
                     ]
                 },
                 options: chartOpts('Risk Score', 'Temperature (°C)')
             });
 
-            // Precip scatter
             charts.precip = new Chart(document.getElementById('precipChart'), {
                 type: 'scatter',
                 data: {
                     datasets: [
-                        {
-                            label: 'Actual',
-                            data: d.precipitations.map((p, i) => ({ x: p, y: d.actual_risk[i] })),
-                            backgroundColor: d.anomalies.map(a => a ? 'rgba(255,107,107,0.8)' : 'rgba(0,201,167,0.7)'),
-                            pointRadius: 6,
-                        },
-                        {
-                            label: 'Predicted',
-                            data: d.precipitations.map((p, i) => ({ x: p, y: d.predicted_risk[i] })),
-                            backgroundColor: 'rgba(255,209,102,0.5)',
-                            pointRadius: 4,
-                        }
+                        { label: 'Actual', data: d.precipitations.map((p, i) => ({ x: p, y: d.actual_risk[i] })), backgroundColor: d.anomalies.map(a => a ? 'rgba(255,107,107,0.85)' : 'rgba(0,201,167,0.7)'), pointRadius: 6 },
+                        { label: 'Predicted', data: d.precipitations.map((p, i) => ({ x: p, y: d.predicted_risk[i] })), backgroundColor: 'rgba(255,209,102,0.5)', pointRadius: 4 }
                     ]
                 },
                 options: chartOpts('Risk Score', 'Precipitation (mm)')
             });
 
-            // Table
             let rows = '<tr><th>Year</th><th>Temp (°C)</th><th>Precip (mm)</th><th>Actual Risk</th><th>Predicted Risk</th><th>Δ Error</th><th>Flag</th></tr>';
             d.years.forEach((yr, i) => {
                 const err = (d.actual_risk[i] - d.predicted_risk[i]).toFixed(3);
                 const cls = d.anomalies[i] ? ' class="anomaly"' : '';
-                rows += `<tr${cls}>
-      <td>${yr}</td>
-      <td>${d.temperatures[i]}</td>
-      <td>${d.precipitations[i]}</td>
-      <td>${d.actual_risk[i]}</td>
-      <td>${d.predicted_risk[i]}</td>
-      <td>${err}</td>
-      <td>${d.anomalies[i] ? '⚠ anomaly' : '—'}</td>
-    </tr>`;
+                rows += `<tr${cls}><td>${yr}</td><td>${d.temperatures[i]}</td><td>${d.precipitations[i]}</td><td>${d.actual_risk[i]}</td><td>${d.predicted_risk[i]}</td><td>${err}</td><td>${d.anomalies[i] ? '⚠ anomaly' : '—'}</td></tr>`;
             });
             document.getElementById('dataTable').innerHTML = rows;
 
@@ -681,8 +1240,7 @@
 
         function chartOpts(yLabel, xLabel) {
             return {
-                responsive: true,
-                maintainAspectRatio: false,
+                responsive: true, maintainAspectRatio: false,
                 plugins: {
                     legend: { labels: { boxWidth: 12, font: { size: 11 } } },
                     tooltip: { mode: 'index', intersect: false }
