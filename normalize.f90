@@ -1,3 +1,5 @@
+! NOT USED ANYMORE !
+! DO NOT REFER TO !
 program anomaly_detection
     implicit none
     real, dimension(100) :: temperature, precipitation
