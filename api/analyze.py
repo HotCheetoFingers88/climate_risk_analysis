@@ -3,6 +3,7 @@ import json
 import io
 import csv
 import math
+import os
 
 # Pure-Python linear regression (no sklearn needed on Vercel)
 def mean(vals):
@@ -56,29 +57,18 @@ def parse_csv(text):
             continue
     return years, temps, precips, risks
 
-SAMPLE_CSV = """Year,Temperature,Precipitation,RiskScore
-1990,14.2,820,32.1
-1991,14.5,790,33.4
-1992,14.8,810,35.2
-1993,15.1,760,37.8
-1994,15.3,740,39.1
-1995,15.7,720,41.5
-1996,16.0,700,43.2
-1997,16.2,680,45.8
-1998,16.8,650,49.3
-1999,17.1,630,52.1
-2000,17.4,610,54.7
-2001,17.6,590,57.2
-2002,18.0,570,60.1
-2003,18.3,550,63.4
-2004,18.7,530,67.2
-2005,19.1,510,71.0
-2006,19.4,490,74.5
-2007,19.8,470,78.3
-2008,20.2,450,82.1
-2009,20.6,430,86.4
-2010,21.0,410,90.8
-"""
+SAMPLE_DATA_PATH = os.path.join(os.path.dirname(__file__), '..', 'public', 'sample-data.json')
+
+def _load_sample_csv():
+    """Build the sample CSV text from the shared sample-data.json file,
+    so the sample dataset lives in exactly one place in the repo."""
+    with open(SAMPLE_DATA_PATH, 'r') as f:
+        data = json.load(f)
+    lines = [','.join(data['columns'])]
+    lines += [','.join(str(v) for v in row) for row in data['rows']]
+    return '\n'.join(lines) + '\n'
+
+SAMPLE_CSV = _load_sample_csv()
 
 class handler(BaseHTTPRequestHandler):
     def do_OPTIONS(self):

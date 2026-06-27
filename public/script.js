@@ -1,6 +1,23 @@
         const API = '/api/analyze';
         let charts = {};
 
+        // ── Sample data table (loaded from JSON, not hardcoded HTML) ──
+        async function loadSampleTable() {
+            try {
+                const res = await fetch('sample-data.json');
+                const { columns, rows } = await res.json();
+                const labels = ['Year', 'Temperature (°C)', 'Precipitation (mm)', 'RiskScore'];
+                let html = '<tr>' + labels.map(l => `<th>${l}</th>`).join('') + '</tr>';
+                rows.forEach(row => {
+                    html += '<tr>' + row.map(v => `<td>${v}</td>`).join('') + '</tr>';
+                });
+                document.getElementById('sampleTable').innerHTML = html;
+            } catch (err) {
+                document.getElementById('sampleTable').innerHTML = '<tr><td>Could not load sample data.</td></tr>';
+            }
+        }
+        loadSampleTable();
+
         // ── Tab switching ──
         function switchTab(tab) {
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
