@@ -1,7 +1,0 @@
-project('normalize', 'fortran')
-
-# Define the Fortran source file
-fsrc = files('normalize.f90')
-
-# Create the Fortran shared library to be built
-shared_library('normalize', fsrc)
