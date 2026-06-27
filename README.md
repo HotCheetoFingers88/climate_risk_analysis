@@ -42,39 +42,54 @@ The tool can process historical climate data, calculate important statistical me
 
 ### Setting Up the Environment
 
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/yourusername/climate-risk-analysis-tool.git
-   cd climate-risk-analysis-tool
-   ```
+# Climate Risk Analysis — Web Version
 
-2. **Create and activate a virtual environment (optional but recommended)**:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate   # On Windows: venv\Scripts\activate
-   ```
+A Vercel-ready web app that replicates the climate_risk_analysis_tool.py functionality in the browser.
 
-3. **Install dependencies**:
-   Create a `requirements.txt` file with the following content:
-   ```
-   pandas
-   numpy
-   matplotlib
-   scikit-learn
-   meson
-   ```
+## Features
+- Upload your own CSV or run with built-in sample data
+- Multiple regression (Temperature + Precipitation → RiskScore)
+- Anomaly detection (2σ threshold)
+- Interactive charts: timeline, scatter plots
+- Full data table with error column
+- Zero external Python dependencies (pure stdlib only)
 
-   Then, install the libraries:
-   ```bash
-   pip install -r requirements.txt
-   ```
+## Deploy to Vercel
 
-4. **Fortran Compilation** :
-   to compile the Fortran code using `f2py`.
+1. Push this folder to a GitHub repo
+2. Go to [vercel.com](https://vercel.com) → New Project → Import that repo
+3. No settings to change — Vercel auto-detects via `vercel.json`
+4. Click **Deploy** ✓
 
-   Example:
-   ```bash
-   f2py -c normalize.f90
+## Local dev
+
+```bash
+npm i -g vercel
+vercel dev
+```
+Then open http://localhost:3000
+
+## CSV format
+
+Your CSV must have these columns (header names exact):
+
+```
+Year,Temperature,Precipitation,RiskScore
+1990,14.2,820,32.1
+1991,14.5,790,33.4
+...
+```
+
+## Project structure
+
+```
+├── api/
+│   └── analyze.py      # Vercel serverless Python function
+├── public/
+│   └── index.html      # Single-page frontend
+├── vercel.json         # Routing config
+└── README.md
+```
    ```
 
 ## Usage

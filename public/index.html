@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Climate Risk Analysis</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --bg: #0a0f1a;
+            --surface: #0f1827;
+            --surface2: #162035;
+            --border: #1e2e4a;
+            --accent: #00c9a7;
+            --accent2: #ff6b6b;
+            --accent3: #ffd166;
+            --text: #e8edf5;
+            --muted: #6b7fa3;
+            --font-mono: 'Courier New', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* ── Header ── */
+        header {
+            border-bottom: 1px solid var(--border);
+            padding: 1.25rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--surface);
+        }
+
+        .logo {
+            width: 32px;
+            height: 32px;
+            background: var(--accent);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        header h1 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        header span {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-left: auto;
+        }
+
+        /* ── Layout ── */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* ── Upload zone ── */
+        .upload-section {
+            background: var(--surface);
+            border: 1px dashed var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: border-color 0.2s;
+        }
+
+        .upload-section:hover {
+            border-color: var(--accent);
+        }
+
+        .upload-section h2 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+            margin-bottom: 1rem;
+        }
+
+        .upload-row {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .drop-zone {
+            flex: 1;
+            min-width: 200px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--surface2);
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+
+        .drop-zone:hover,
+        .drop-zone.dragover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .drop-zone input {
+            display: none;
+        }
+
+        .drop-zone .icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .or-divider {
+            display: flex;
+            align-items: center;
+            color: var(--muted);
+            font-size: 0.8rem;
+            padding-top: 0.5rem;
+        }
+
+        .sample-btn {
+            background: var(--accent);
+            color: #0a0f1a;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+            align-self: center;
+        }
+
+        .sample-btn:hover {
+            opacity: 0.85;
+        }
+
+        .csv-format {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            color: var(--muted);
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .csv-format strong {
+            color: var(--accent);
+            display: block;
+            margin-bottom: 0.4rem;
+            font-family: inherit;
+        }
+
+        /* ── Status bar ── */
+        #status {
+            display: none;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        #status.loading {
+            background: rgba(0, 201, 167, 0.1);
+            border: 1px solid rgba(0, 201, 167, 0.3);
+            color: var(--accent);
+        }
+
+        #status.error {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            color: var(--accent2);
+        }
+
+        /* ── Stats grid ── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.1rem 1.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: var(--muted);
+            margin-bottom: 0.35rem;
+        }
+
+        .stat-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            font-family: var(--font-mono);
+            color: var(--accent);
+        }
+
+        .stat-value.warn {
+            color: var(--accent3);
+        }
+
+        .stat-value.danger {
+            color: var(--accent2);
+        }
+
+        .stat-sub {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-top: 0.2rem;
+        }
+
+        /* ── Charts ── */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .chart-card.wide {
+            grid-column: 1 / -1;
+        }
+
+        .chart-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: var(--muted);
+            margin-bottom: 1rem;
+        }
+
+        .chart-wrap {
+            position: relative;
+            height: 260px;
+        }
+
+        /* ── Model info ── */
+        .model-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .model-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: var(--muted);
+            margin-bottom: 1rem;
+        }
+
+        .equation {
+            font-family: var(--font-mono);
+            font-size: 0.95rem;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            word-break: break-all;
+        }
+
+        .corr-row {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .corr-item {
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+
+        .corr-item strong {
+            color: var(--text);
+        }
+
+        /* ── Results hidden by default ── */
+        #results {
+            display: none;
+        }
+
+        /* ── Spinner ── */
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(0, 201, 167, 0.3);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin-right: 0.5rem;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ── Data table ── */
+        .table-wrap {
+            overflow-x: auto;
+            margin-top: 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+        }
+
+        th {
+            text-align: left;
+            padding: 0.5rem 0.75rem;
+            color: var(--muted);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 0.5rem 0.75rem;
+            border-bottom: 1px solid rgba(30, 46, 74, 0.5);
+            font-family: var(--font-mono);
+        }
+
+        tr.anomaly td {
+            background: rgba(255, 107, 107, 0.07);
+            color: var(--accent2);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="logo">🌍</div>
+        <h1>Climate Risk Analysis</h1>
+        <span>Linear Regression · Anomaly Detection</span>
+    </header>
+
+    <div class="container">
+
+        <!-- Upload -->
+        <div class="upload-section">
+            <h2>Data Input</h2>
+            <div class="upload-row">
+                <div class="drop-zone" id="dropZone">
+                    <input type="file" id="fileInput" accept=".csv">
+                    <div class="icon">📂</div>
+                    <div>Drop your CSV here or <u>browse</u></div>
+                    <div style="font-size:0.75rem;margin-top:0.3rem" id="fileName"></div>
+                </div>
+                <div class="or-divider">or</div>
+                <button class="sample-btn" id="sampleBtn">▶ Run with Sample Data</button>
+                <div class="csv-format">
+                    <strong>Required CSV columns:</strong>
+                    Year, Temperature,<br>Precipitation, RiskScore
+                </div>
+            </div>
+        </div>
+
+        <div id="status"></div>
+
+        <!-- Results -->
+        <div id="results">
+
+            <!-- Stats -->
+            <div class="stats-grid" id="statsGrid"></div>
+
+            <!-- Model equation -->
+            <div class="model-card">
+                <div class="model-title">Regression Model</div>
+                <div class="equation" id="equation"></div>
+                <div class="corr-row" id="corrRow"></div>
+            </div>
+
+            <!-- Charts -->
+            <div class="charts-grid">
+                <div class="chart-card wide">
+                    <div class="chart-title">Risk Score Over Time — Actual vs Predicted</div>
+                    <div class="chart-wrap"><canvas id="timelineChart"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">Temperature vs Risk Score</div>
+                    <div class="chart-wrap"><canvas id="tempChart"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">Precipitation vs Risk Score</div>
+                    <div class="chart-wrap"><canvas id="precipChart"></canvas></div>
+                </div>
+            </div>
+
+            <!-- Data table -->
+            <div class="chart-card">
+                <div class="chart-title">Data Table <span
+                        style="color:var(--accent2);font-size:0.75rem;margin-left:0.5rem">🔴 = anomaly</span></div>
+                <div class="table-wrap">
+                    <table id="dataTable"></table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const API = '/api/analyze';
+        let charts = {};
+
+        // ── Chart defaults ──
+        Chart.defaults.color = '#6b7fa3';
+        Chart.defaults.borderColor = '#1e2e4a';
+        Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+
+        function destroyCharts() {
+            Object.values(charts).forEach(c => c.destroy());
+            charts = {};
+        }
+
+        // ── UI helpers ──
+        function showStatus(msg, type) {
+            const el = document.getElementById('status');
+            el.style.display = 'block';
+            el.className = type;
+            el.innerHTML = type === 'loading'
+                ? `<span class="spinner"></span>${msg}`
+                : msg;
+        }
+        function hideStatus() { document.getElementById('status').style.display = 'none'; }
+
+        // ── File drop ──
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+
+        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+        dropZone.addEventListener('drop', e => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file) handleFile(file);
+        });
+        fileInput.addEventListener('change', () => { if (fileInput.files[0]) handleFile(fileInput.files[0]); });
+
+        function handleFile(file) {
+            document.getElementById('fileName').textContent = file.name;
+            const reader = new FileReader();
+            reader.onload = e => runAnalysis(e.target.result);
+            reader.readAsText(file);
+        }
+
+        document.getElementById('sampleBtn').addEventListener('click', () => {
+            document.getElementById('fileName').textContent = 'sample_data.csv';
+            runAnalysis(null);
+        });
+
+        // ── Core fetch ──
+        async function runAnalysis(csvText) {
+            showStatus('Running analysis…', 'loading');
+            destroyCharts();
+            document.getElementById('results').style.display = 'none';
+
+            try {
+                const opts = csvText
+                    ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ csv: csvText }) }
+                    : { method: 'GET' };
+                const res = await fetch(API, opts);
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Analysis failed');
+                hideStatus();
+                renderResults(data);
+            } catch (err) {
+                showStatus('⚠ ' + err.message, 'error');
+            }
+        }
+
+        // ── Render ──
+        function renderResults(d) {
+            const s = d.stats;
+
+            // Stats cards
+            const r2class = s.r2 >= 0.85 ? '' : s.r2 >= 0.6 ? 'warn' : 'danger';
+            document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">Data Points</div>
+      <div class="stat-value">${s.n}</div>
+      <div class="stat-sub">${s.n_anomalies} anomalies</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Mean Risk</div>
+      <div class="stat-value">${s.mean}</div>
+      <div class="stat-sub">σ = ${s.std}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Median Risk</div>
+      <div class="stat-value">${s.median}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">R² Score</div>
+      <div class="stat-value ${r2class}">${s.r2}</div>
+      <div class="stat-sub">Model fit</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">MSE</div>
+      <div class="stat-value">${s.mse}</div>
+      <div class="stat-sub">Mean Sq. Error</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Anomalies</div>
+      <div class="stat-value ${s.n_anomalies > 0 ? 'danger' : ''}">${s.n_anomalies}</div>
+      <div class="stat-sub">2σ threshold</div>
+    </div>
+  `;
+
+            // Equation
+            const sign = (v) => v >= 0 ? '+' : '-';
+            document.getElementById('equation').textContent =
+                `RiskScore = ${s.b0} ${sign(s.b1_temp)} ${Math.abs(s.b1_temp)} × Temperature ${sign(s.b2_precip)} ${Math.abs(s.b2_precip)} × Precipitation`;
+
+            document.getElementById('corrRow').innerHTML = `
+    <div class="corr-item">Temp ↔ Risk: <strong>${s.temp_risk_corr}</strong></div>
+    <div class="corr-item">Precip ↔ Risk: <strong>${s.precip_risk_corr}</strong></div>
+  `;
+
+            // Timeline chart
+            const anomalyColors = d.actual_risk.map((v, i) =>
+                d.anomalies[i] ? 'rgba(255,107,107,1)' : 'rgba(0,201,167,0.8)'
+            );
+            charts.timeline = new Chart(document.getElementById('timelineChart'), {
+                type: 'line',
+                data: {
+                    labels: d.years,
+                    datasets: [
+                        {
+                            label: 'Actual Risk',
+                            data: d.actual_risk,
+                            borderColor: 'rgba(0,201,167,0.9)',
+                            backgroundColor: 'rgba(0,201,167,0.08)',
+                            pointBackgroundColor: anomalyColors,
+                            pointRadius: 5,
+                            tension: 0.3,
+                            fill: true,
+                        },
+                        {
+                            label: 'Predicted Risk',
+                            data: d.predicted_risk,
+                            borderColor: 'rgba(255,209,102,0.9)',
+                            borderDash: [5, 4],
+                            pointRadius: 3,
+                            tension: 0.3,
+                            fill: false,
+                        }
+                    ]
+                },
+                options: chartOpts('Risk Score')
+            });
+
+            // Temp scatter
+            charts.temp = new Chart(document.getElementById('tempChart'), {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Actual',
+                            data: d.temperatures.map((t, i) => ({ x: t, y: d.actual_risk[i] })),
+                            backgroundColor: d.anomalies.map(a => a ? 'rgba(255,107,107,0.8)' : 'rgba(0,201,167,0.7)'),
+                            pointRadius: 6,
+                        },
+                        {
+                            label: 'Predicted',
+                            data: d.temperatures.map((t, i) => ({ x: t, y: d.predicted_risk[i] })),
+                            backgroundColor: 'rgba(255,209,102,0.5)',
+                            pointRadius: 4,
+                        }
+                    ]
+                },
+                options: chartOpts('Risk Score', 'Temperature (°C)')
+            });
+
+            // Precip scatter
+            charts.precip = new Chart(document.getElementById('precipChart'), {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Actual',
+                            data: d.precipitations.map((p, i) => ({ x: p, y: d.actual_risk[i] })),
+                            backgroundColor: d.anomalies.map(a => a ? 'rgba(255,107,107,0.8)' : 'rgba(0,201,167,0.7)'),
+                            pointRadius: 6,
+                        },
+                        {
+                            label: 'Predicted',
+                            data: d.precipitations.map((p, i) => ({ x: p, y: d.predicted_risk[i] })),
+                            backgroundColor: 'rgba(255,209,102,0.5)',
+                            pointRadius: 4,
+                        }
+                    ]
+                },
+                options: chartOpts('Risk Score', 'Precipitation (mm)')
+            });
+
+            // Table
+            let rows = '<tr><th>Year</th><th>Temp (°C)</th><th>Precip (mm)</th><th>Actual Risk</th><th>Predicted Risk</th><th>Δ Error</th><th>Flag</th></tr>';
+            d.years.forEach((yr, i) => {
+                const err = (d.actual_risk[i] - d.predicted_risk[i]).toFixed(3);
+                const cls = d.anomalies[i] ? ' class="anomaly"' : '';
+                rows += `<tr${cls}>
+      <td>${yr}</td>
+      <td>${d.temperatures[i]}</td>
+      <td>${d.precipitations[i]}</td>
+      <td>${d.actual_risk[i]}</td>
+      <td>${d.predicted_risk[i]}</td>
+      <td>${err}</td>
+      <td>${d.anomalies[i] ? '⚠ anomaly' : '—'}</td>
+    </tr>`;
+            });
+            document.getElementById('dataTable').innerHTML = rows;
+
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function chartOpts(yLabel, xLabel) {
+            return {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { labels: { boxWidth: 12, font: { size: 11 } } },
+                    tooltip: { mode: 'index', intersect: false }
+                },
+                scales: {
+                    x: { title: { display: !!xLabel, text: xLabel, color: '#6b7fa3' }, grid: { color: 'rgba(30,46,74,0.5)' } },
+                    y: { title: { display: true, text: yLabel, color: '#6b7fa3' }, grid: { color: 'rgba(30,46,74,0.5)' } }
+                }
+            };
+        }
+    </script>
+</body>
+
+</html>
