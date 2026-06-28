@@ -1,0 +1,57 @@
+:root {
+  --bg: #f0ead8;
+  --surface: #faf7ee;
+  --surface2: #eee8d0;
+  --border: #c8c084;
+  --accent: #6b7a2e;
+  --accent2: #8b6914;
+  --accent3: #5a6e22;
+  --text: #2a2a10;
+  --muted: #5c5c30;
+  --text-on-accent: #ffffff;
+  --font-mono: 'Courier New', monospace;
+  --danger: #b54a3f;
+  --danger-bg: rgba(181, 74, 63, 0.12);
+
+  --grad-header: linear-gradient(135deg, #d8d4a0 0%, #c8c47a 50%, #b8b460 100%);
+  --grad-card: linear-gradient(145deg, #fdfbf0 0%, #f5f0d8 100%);
+  --grad-accent: linear-gradient(135deg, #7d8f32 0%, #5a6e22 100%);
+  --grad-surface2: linear-gradient(135deg, #e8e4c0 0%, #d8d49a 100%);
+  --grad-bg: linear-gradient(160deg, #f5ead8 0%, #ede6cc 40%, #e5dfc0 100%);
+  --shadow-card: 0 2px 12px rgba(90, 80, 20, 0.10), 0 1px 3px rgba(90, 80, 20, 0.07);
+  --shadow-hover: 0 6px 24px rgba(90, 80, 20, 0.16), 0 2px 6px rgba(90, 80, 20, 0.10);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  min-height: 100vh;
+}
+
+body {
+  background: var(--grad-bg);
+  background-attachment: fixed;
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.6;
+}
+
+button {
+  font-family: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent3);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

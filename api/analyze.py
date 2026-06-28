@@ -57,7 +57,7 @@ def parse_csv(text):
             continue
     return years, temps, precips, risks
 
-SAMPLE_DATA_PATH = os.path.join(os.path.dirname(__file__), '..', 'public', 'sample-data.json')
+SAMPLE_DATA_PATH = os.path.join(os.path.dirname(__file__), 'sample-data.json')
 
 def _load_sample_csv():
     """Build the sample CSV text from the shared sample-data.json file,
@@ -85,16 +85,27 @@ class handler(BaseHTTPRequestHandler):
         body = self.rfile.read(length).decode('utf-8')
         try:
             payload = json.loads(body)
-            csv_text = payload.get('csv', SAMPLE_CSV)
         except Exception:
-            csv_text = SAMPLE_CSV
-        years, temps, precips, risks = parse_csv(csv_text)
+            payload = {}
+
+        if 'years' in payload and 'risks' in payload:
+            # Raw-array path: frontend already has years/temps/precips and has
+            # computed RiskScore itself (e.g. from real NOAA data + user-chosen
+            # weights). We just run regression + anomaly detection on it.
+            years = [str(y) for y in payload.get('years', [])]
+            temps = [float(v) for v in payload.get('temperatures', [])]
+            precips = [float(v) for v in payload.get('precipitations', [])]
+            risks = [float(v) for v in payload.get('risks', [])]
+        else:
+            csv_text = payload.get('csv', SAMPLE_CSV)
+            years, temps, precips, risks = parse_csv(csv_text)
+
         if len(years) < 4:
             self.send_response(400)
             self._cors()
             self.send_header('Content-Type', 'application/json')
             self.end_headers()
-            self.wfile.write(json.dumps({'error': 'Need at least 4 valid rows with Year, Temperature, Precipitation, RiskScore columns.'}).encode())
+            self.wfile.write(json.dumps({'error': 'Need at least 4 valid data points (Year, Temperature, Precipitation, RiskScore).'}).encode())
             return
         self._run_and_respond(years, temps, precips, risks)
 
