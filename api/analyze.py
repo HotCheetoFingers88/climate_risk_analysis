@@ -77,8 +77,11 @@ class handler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
-        years, temps, precips, risks = parse_csv(SAMPLE_CSV)
-        self._run_and_respond(years, temps, precips, risks)
+        try:
+            years, temps, precips, risks = parse_csv(SAMPLE_CSV)
+            self._run_and_respond(years, temps, precips, risks)
+        except Exception as e:
+            self._send_error(500, f'Analysis failed: {e}')
 
     def do_POST(self):
         length = int(self.headers.get('Content-Length', 0))
@@ -88,26 +91,30 @@ class handler(BaseHTTPRequestHandler):
         except Exception:
             payload = {}
 
-        if 'years' in payload and 'risks' in payload:
-            # Raw-array path: frontend already has years/temps/precips and has
-            # computed RiskScore itself (e.g. from real NOAA data + user-chosen
-            # weights). We just run regression + anomaly detection on it.
-            years = [str(y) for y in payload.get('years', [])]
-            temps = [float(v) for v in payload.get('temperatures', [])]
-            precips = [float(v) for v in payload.get('precipitations', [])]
-            risks = [float(v) for v in payload.get('risks', [])]
-        else:
-            csv_text = payload.get('csv', SAMPLE_CSV)
-            years, temps, precips, risks = parse_csv(csv_text)
+        try:
+            if 'years' in payload and 'risks' in payload:
+                # Raw-array path: frontend already has years/temps/precips and has
+                # computed RiskScore itself (e.g. from real NOAA data + user-chosen
+                # weights). We just run regression + anomaly detection on it.
+                years = [str(y) for y in payload.get('years', [])]
+                temps = [float(v) for v in payload.get('temperatures', [])]
+                precips = [float(v) for v in payload.get('precipitations', [])]
+                risks = [float(v) for v in payload.get('risks', [])]
+                if not (len(years) == len(temps) == len(precips) == len(risks)):
+                    return self._send_error(400, 'years, temperatures, precipitations, and risks must all be the same length.')
+            else:
+                csv_text = payload.get('csv', SAMPLE_CSV)
+                years, temps, precips, risks = parse_csv(csv_text)
+        except (TypeError, ValueError) as e:
+            return self._send_error(400, f'Could not parse request data: {e}')
 
         if len(years) < 4:
-            self.send_response(400)
-            self._cors()
-            self.send_header('Content-Type', 'application/json')
-            self.end_headers()
-            self.wfile.write(json.dumps({'error': 'Need at least 4 valid data points (Year, Temperature, Precipitation, RiskScore).'}).encode())
-            return
-        self._run_and_respond(years, temps, precips, risks)
+            return self._send_error(400, 'Need at least 4 valid data points (Year, Temperature, Precipitation, RiskScore).')
+
+        try:
+            self._run_and_respond(years, temps, precips, risks)
+        except Exception as e:
+            return self._send_error(500, f'Analysis failed: {e}')
 
     def _run_and_respond(self, years, temps, precips, risks):
         predictions, b0, b1, b2, r2, mse = linear_regression(temps, precips, risks)
@@ -144,6 +151,13 @@ class handler(BaseHTTPRequestHandler):
         self.send_header('Content-Type', 'application/json')
         self.end_headers()
         self.wfile.write(json.dumps(result).encode())
+
+    def _send_error(self, code, message):
+        self.send_response(code)
+        self._cors()
+        self.send_header('Content-Type', 'application/json')
+        self.end_headers()
+        self.wfile.write(json.dumps({'error': message}).encode())
 
     def _cors(self):
         self.send_header('Access-Control-Allow-Origin', '*')
