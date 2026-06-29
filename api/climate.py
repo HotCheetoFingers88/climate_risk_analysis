@@ -5,18 +5,11 @@ import urllib.error
 import json
 import os
 
-from cities import CITIES
+from _cities_data import CITIES, city_by_id
 
 NOAA_BASE = 'https://www.ncei.noaa.gov/cdo-web/api/v2/data'
 DEFAULT_START_YEAR = 1995
 DEFAULT_END_YEAR = 2024
-
-
-def _city_by_id(city_id):
-    for c in CITIES:
-        if c['id'] == city_id:
-            return c
-    return None
 
 
 def _fetch_noaa_page(station, datatype, start_year, end_year, token, offset=1, limit=1000):
@@ -102,7 +95,7 @@ class handler(BaseHTTPRequestHandler):
         start_year = int(query.get('start', [DEFAULT_START_YEAR])[0])
         end_year = int(query.get('end', [DEFAULT_END_YEAR])[0])
 
-        city = _city_by_id(city_id)
+        city = city_by_id(city_id)
         if not city:
             return self._error(400, f"Unknown city '{city_id}'. See /api/cities for valid options.")
 
