@@ -5,7 +5,49 @@ import urllib.error
 import json
 import os
 
-from _cities_data import CITIES, city_by_id
+# Duplicated here (also in cities.py) rather than imported from a shared file.
+# Vercel bundles each file under /api as its own isolated function, and
+# cross-file imports between them (even underscore-prefixed "shared" files)
+# are unreliable across runtimes/versions. Duplicating ~25 lines of static
+# data is a small price for not fighting that bundling behavior.
+CITIES = [
+    {
+        "id": "nyc",
+        "label": "New York (Central Park)",
+        "station": "GHCND:USW00094728",
+        "lat": 40.7794,
+        "lon": -73.9692,
+    },
+    {
+        "id": "chicago",
+        "label": "Chicago (O'Hare)",
+        "station": "GHCND:USW00094846",
+        "lat": 41.9786,
+        "lon": -87.9048,
+    },
+    {
+        "id": "phoenix",
+        "label": "Phoenix (Sky Harbor)",
+        "station": "GHCND:USW00023183",
+        "lat": 33.4297,
+        "lon": -112.0112,
+    },
+    {
+        "id": "seattle",
+        "label": "Seattle-Tacoma",
+        "station": "GHCND:USW00024233",
+        "lat": 47.4444,
+        "lon": -122.3138,
+    },
+]
+
+
+def city_by_id(city_id):
+    for c in CITIES:
+        if c["id"] == city_id:
+            return c
+    return None
+
 
 NOAA_BASE = 'https://www.ncei.noaa.gov/cdo-web/api/v2/data'
 DEFAULT_START_YEAR = 1995
