@@ -4,6 +4,7 @@ import urllib.request
 import urllib.error
 import json
 import os
+import time
 
 # Duplicated here (also in cities.py) rather than imported from a shared file.
 # Vercel bundles each file under /api as its own isolated function, and
@@ -79,6 +80,7 @@ def _fetch_noaa_page(station, datatype, start_year, end_year, token, offset=1, l
 
 
 NOAA_CHUNK_YEARS = 10  # NOAA CDO rejects GSOY date ranges longer than ~10 years
+NOAA_RATE_DELAY = 0.25  # seconds between chunk requests (NOAA limit: 5/sec)
 
 def _fetch_all_years(station, datatype, start_year, end_year, token):
     """Fetch {year: value} by splitting into NOAA_CHUNK_YEARS chunks (NOAA
@@ -86,7 +88,11 @@ def _fetch_all_years(station, datatype, start_year, end_year, token):
     chunk, pages through NOAA's 1000-row limit via offset."""
     by_year = {}
     chunk_start = start_year
+    first_chunk = True
     while chunk_start <= end_year:
+        if not first_chunk:
+            time.sleep(NOAA_RATE_DELAY)
+        first_chunk = False
         chunk_end = min(chunk_start + NOAA_CHUNK_YEARS - 1, end_year)
         offset = 1
         while True:
