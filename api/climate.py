@@ -56,7 +56,7 @@ DEFAULT_END_YEAR = 2024
 
 def _fetch_noaa_page(station, datatype, start_year, end_year, token, offset=1, limit=1000):
     """Fetch one page of GSOY data for a single datatype (TMAX, TMIN, or PRCP).
-    NOAA paginates at up to 1000 results per request."""
+    Raises urllib.error.HTTPError with the response body attached on failure."""
     params = {
         'datasetid': 'GSOY',
         'stationid': station,
@@ -69,29 +69,39 @@ def _fetch_noaa_page(station, datatype, start_year, end_year, token, offset=1, l
     }
     url = f'{NOAA_BASE}?{urlencode(params)}'
     req = urllib.request.Request(url, headers={'token': token})
-    with urllib.request.urlopen(req, timeout=20) as resp:
-        return json.loads(resp.read().decode())
+    try:
+        with urllib.request.urlopen(req, timeout=20) as resp:
+            return json.loads(resp.read().decode())
+    except urllib.error.HTTPError as e:
+        # Read and re-raise with NOAA's actual error body attached
+        body = e.read().decode('utf-8', errors='replace')
+        raise urllib.error.HTTPError(e.url, e.code, f'{e.reason} — {body}', e.headers, None)
 
+
+NOAA_CHUNK_YEARS = 10  # NOAA CDO rejects GSOY date ranges longer than ~10 years
 
 def _fetch_all_years(station, datatype, start_year, end_year, token):
-    """Page through NOAA results and return {year: value}. Real NOAA data is
-    messy: some years are missing entirely, some stations report a given
-    datatype only for part of the requested range, and results arrive
-    paginated rather than as one blob."""
+    """Fetch {year: value} by splitting into NOAA_CHUNK_YEARS chunks (NOAA
+    rejects spans longer than ~10 years for GSOY) and merging. Within each
+    chunk, pages through NOAA's 1000-row limit via offset."""
     by_year = {}
-    offset = 1
-    while True:
-        data = _fetch_noaa_page(station, datatype, start_year, end_year, token, offset=offset)
-        results = data.get('results', [])
-        if not results:
-            break
-        for row in results:
-            year = int(row['date'][:4])
-            by_year[year] = row['value']
-        count = data.get('metadata', {}).get('resultset', {}).get('count', len(results))
-        offset += len(results)
-        if offset > count or len(results) == 0:
-            break
+    chunk_start = start_year
+    while chunk_start <= end_year:
+        chunk_end = min(chunk_start + NOAA_CHUNK_YEARS - 1, end_year)
+        offset = 1
+        while True:
+            data = _fetch_noaa_page(station, datatype, chunk_start, chunk_end, token, offset=offset)
+            results = data.get('results', [])
+            if not results:
+                break
+            for row in results:
+                year = int(row['date'][:4])
+                by_year[year] = row['value']
+            count = data.get('metadata', {}).get('resultset', {}).get('count', len(results))
+            offset += len(results)
+            if offset > count:
+                break
+        chunk_start += NOAA_CHUNK_YEARS
     return by_year
 
 
